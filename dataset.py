@@ -1,9 +1,14 @@
 import urllib, urllib2
 import json
+import logging
 import pprint
 
 from helper import munge_title_to_name, re_munge_name, munge_tag, LICENSES, \
     get_readable_frequency
+
+
+log = logging.getLogger(__name__)
+
 
 class Dataset(dict):
     def __init__(self,*arg,**kw):
@@ -32,10 +37,10 @@ class Dataset(dict):
                     dataset_created = self.create(url, api_key, True)
                     return dataset_created
             else:
-                print('Error: %s' % e )
+                log.exception('Failed to create dataset')
                 quit()
         except urllib2.URLError, e:
-            print('Error: %s' % e )
+            log.exception('Failed to create dataset')
             quit()
         else:
             response_dict = json.loads(response.read())
