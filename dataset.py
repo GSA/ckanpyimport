@@ -37,6 +37,7 @@ class Dataset(dict):
                     dataset_created = self.create(url, api_key, True)
                     return dataset_created
             else:
+                log.error(error_dict)
                 log.exception('Failed to create dataset')
                 quit()
         except urllib2.URLError, e:
@@ -97,6 +98,7 @@ def map_dataset(dataset, ds):
     dataset['license_id'] = LICENSES['License Not Specified']
 
     for key, value in ds.iteritems():
+        log.debug('key=%s value=%s', key, value)
 
         if key in ['title']:
             dataset[key] = value
@@ -271,7 +273,3 @@ def map_dataset(dataset, ds):
                 'key': 'access_level_comment',
                 'value': value
             })
-        
-
-
-
