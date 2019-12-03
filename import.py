@@ -1,8 +1,9 @@
-import sys, pprint
-import urllib, urllib2
-import json
 import ConfigParser
+import json
 import logging
+import pprint
+import sys
+import urllib, urllib2
 
 from dataset import load_dataset, create_dummy_dataset, map_dataset
 from resource import Resource, map_resource
@@ -14,11 +15,20 @@ logging.basicConfig(
 )
 
 if len(sys.argv) < 3:
-    logging.error('Error: Provide server annd org names.')
+    logging.error('Error: Provide server and org names.')
     quit()
 
-config = ConfigParser.ConfigParser()
+CONFIG_DEFAULTS = {
+    'main': {
+        'log_level': 'INFO',
+    },
+}
+
+config = ConfigParser.ConfigParser(CONFIG_DEFAULTS)
 config.read('server.ini')
+
+log_level = config.get('main', 'log_level')
+logging.getLogger().setLevel(log_level)
 
 servers = config.sections()
 server = sys.argv[1]
@@ -130,6 +140,7 @@ def import_ds(ds, type=None, parent_id=None):
 
     # then update the dataset with all info
     dataset_full = load_dataset(ds_created)
+    logging.debug(ds)
     map_dataset(dataset_full, ds)
     dataset_full._update(update_url, api_key)
 
