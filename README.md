@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/GSA/ckanpyimport.svg?style=svg)](https://circleci.com/gh/GSA/ckanpyimport)
+
 # ckanpyimport
 
 Imports datasets from a data.json file into a CKAN instance. Data.gov uses this to move
@@ -21,9 +23,16 @@ E.g.
 This section contains general configuration options, including the URL for the
 data.json to import.
 
+
 ##### query
 
 The URL location to the data.json file to import.
+
+
+##### log_level
+
+How verbose to log messages (default: INFO).
+
 
 #### Server configuration
 
