@@ -1,11 +1,13 @@
-import urllib, urllib2
+import logging
+import urllib
+import urllib2
 import json
-import pprint
+
+
+log = logging.getLogger(__name__)
+
 
 class Resource(dict):
-    def __init__(self,*arg,**kw):
-        super(Resource, self).__init__(*arg, **kw)
-
     def create(self, url, api_key=''):
         json_resource = json.dumps(self)
         json_resource = urllib.quote(json_resource)
@@ -17,10 +19,10 @@ class Resource(dict):
         try:
             response = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
-            print('Error: %s' % e )
+            log.exception(e)
             quit()
         except urllib2.URLError, e:
-            print('Error: %s' % e )
+            log.exception(e)
             quit()
         else:
             response_dict = json.loads(response.read())
@@ -52,7 +54,3 @@ def map_resource(resource, res, dataset_id):
 
     if res.get('describedByType'):
         resource['describedByType'] = res.get('describedByType')
-    
-    
-
-

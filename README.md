@@ -59,6 +59,30 @@ api = <CKAN-API-key>
 ```
 
 
+## Development
+
+
+### Requirements
+
+- [pipenv](https://pipenv.readthedocs.io/en/latest/)
+- [pyenv](https://github.com/pyenv/pyenv) or [Python](https://python.org/) 2
+
+
+### Setup
+
+Install the dependencies.
+
+    $ pipenv install --dev
+
+Lint your code.
+
+    $ make lint
+
+Run the tests.
+
+    $ make test
+
+
 ## Troubleshooting
 
 ### SSL certificate verify failed

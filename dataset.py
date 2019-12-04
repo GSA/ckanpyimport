@@ -1,7 +1,7 @@
-import urllib, urllib2
+import urllib
+import urllib2
 import json
 import logging
-import pprint
 
 from helper import munge_title_to_name, re_munge_name, munge_tag, LICENSES, \
     get_readable_frequency
@@ -11,9 +11,6 @@ log = logging.getLogger(__name__)
 
 
 class Dataset(dict):
-    def __init__(self,*arg,**kw):
-        super(Dataset, self).__init__(*arg, **kw)
-
     def create(self, url, api_key='', rename=False):
         if rename:
             self['name'] = re_munge_name(self['name'])
@@ -60,10 +57,10 @@ class Dataset(dict):
         try:
             response = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
-            print('Error: %s' % e )
+            log.exception(e)
             quit()
         except urllib2.URLError, e:
-            print('Error: %s' % e )
+            log.exception(e)
             quit()
         else:
             response_dict = json.loads(response.read())
@@ -90,25 +87,25 @@ def load_dataset(ds):
         dataset[key] = value
     return dataset
 
-def map_dataset(dataset, ds):
+def map_dataset(dataset, ds): # pylint: disable=too-many-branches,too-many-statements
 
     dataset['private'] = True
     dataset['extras'] = []
     dataset['tags'] = []
     dataset['license_id'] = LICENSES['License Not Specified']
 
-    for key, value in ds.iteritems():
+    for key, value in ds.iteritems(): # pylint: disable=too-many-nested-blocks
         log.debug('key=%s value=%s', key, value)
 
         if key in ['title']:
             dataset[key] = value
 
         if key in [
-            'modified',
-            'spatial',
-            'temporal',
-            'is_parent',
-            'parent_dataset'
+                'modified',
+                'spatial',
+                'temporal',
+                'is_parent',
+                'parent_dataset'
             ]:
             dataset['extras'].append({
                 'key': key,
@@ -121,8 +118,8 @@ def map_dataset(dataset, ds):
         if key == 'keyword':
             for term in value:
                 dataset['tags'].append({
-                'name': munge_tag(term)
-            })
+                    'name': munge_tag(term),
+                })
 
         if key == 'accessLevel':
             dataset['extras'].append({

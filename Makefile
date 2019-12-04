@@ -1,4 +1,7 @@
-.PHONY: test
+.PHONY: lint test
+
+lint:
+	pipenv run pylint *.py
 
 test:
-	python -m unittest discover
+	pipenv run python -m unittest discover

@@ -3,8 +3,12 @@ jobs:
   build:
     docker:
       - image: circleci/python:2
+    environment:
+      PYENV_VENV_IN_PROJECT: 1
     steps:
       - checkout
+      - run: pipenv sync --dev
+      - run: make lint
       - run: make test
 
 
