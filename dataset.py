@@ -20,16 +20,18 @@ class Dataset(dict):
             self['name'] = munge_title_to_name(self['title'])
 
         json_dataset = json.dumps(self)
-        json_dataset = urllib.parse.quote(json_dataset)
 
-        req = urllib.request.Request(url, json_dataset, {
+        # This looks like a bug in CKAN. When application/json is specified we
+        # get a 400 https://github.com/GSA/datagov-deploy/issues/1177
+        req = urllib.request.Request(url, json_dataset.encode('utf8'), {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
             'X-CKAN-API-Key':api_key,
             'Cookie':'auth_tkt=1'
         })
         try:
             response = urllib.request.urlopen(req)
         except urllib.error.HTTPError as e:
-            error_dict = json.loads(e.read())
+            error_dict = json.loads(e.read().decode('utf8'))
             if 'name' in error_dict['error']:
                 error_message = error_dict['error']['name']
                 if error_message[0] == 'That URL is already in use.':
@@ -43,16 +45,18 @@ class Dataset(dict):
             log.exception('Failed to create dataset')
             sys.exit(1)
         else:
-            response_dict = json.loads(response.read())
+            response_dict = json.loads(response.read().decode('utf8'))
             assert response_dict['success'] is True
             dataset_created = response_dict['result']
         return dataset_created
 
     def _update(self, url, api_key=''):
         json_dataset = json.dumps(self)
-        json_dataset = urllib.parse.quote(json_dataset)
 
-        req = urllib.request.Request(url, json_dataset, {
+        # This looks like a bug in CKAN. When application/json is specified we
+        # get a 400 https://github.com/GSA/datagov-deploy/issues/1177
+        req = urllib.request.Request(url, json_dataset.encode('utf8'), {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
             'X-CKAN-API-Key':api_key,
             'Cookie':'auth_tkt=1'
         })
@@ -65,7 +69,7 @@ class Dataset(dict):
             log.exception(e)
             sys.exit(1)
         else:
-            response_dict = json.loads(response.read())
+            response_dict = json.loads(response.read().decode('utf8'))
             assert response_dict['success'] is True
             dataset_updated = response_dict['result']
         return dataset_updated

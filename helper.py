@@ -61,7 +61,7 @@ def munge_name(name):
 
 def re_munge_name(name):
     name = name[:90]
-    name = name + '-' + binascii.b2a_hex(os.urandom(2))
+    name = name + '-' + binascii.b2a_hex(os.urandom(2)).decode('ascii')
     return name
 
 def munge_title_to_name(name):

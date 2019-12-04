@@ -93,4 +93,4 @@ Sometimes we're working with custom SSL Certificate Authorities, like in our
 staging environment. Specify the CA certificate bundle that contains your CA. On
 our staging instances, the system CA bundle should be sufficient:
 
-    $ SSL_CERT_FILE=/etc/ssl/cert/ca-certificates.crt python import.py inventory va-gov
+    $ SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt python import.py inventory-staging va-gov

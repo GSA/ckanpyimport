@@ -12,9 +12,11 @@ log = logging.getLogger(__name__)
 class Resource(dict):
     def create(self, url, api_key=''):
         json_resource = json.dumps(self)
-        json_resource = urllib.parse.quote(json_resource)
 
-        req = urllib.request.Request(url, json_resource, {
+        # This looks like a bug in CKAN. When application/json is specified we
+        # get a 400 https://github.com/GSA/datagov-deploy/issues/1177
+        req = urllib.request.Request(url, json_resource.encode('utf8'), {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
             'X-CKAN-API-Key':api_key,
             'Cookie':'auth_tkt=1'
         })
@@ -27,7 +29,7 @@ class Resource(dict):
             log.exception(e)
             sys.exit(1)
         else:
-            response_dict = json.loads(response.read())
+            response_dict = json.loads(response.read().decode('utf8'))
             assert response_dict['success'] is True
             resource_created = response_dict['result']
         return resource_created
