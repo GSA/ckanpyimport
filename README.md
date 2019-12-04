@@ -21,9 +21,16 @@ E.g.
 This section contains general configuration options, including the URL for the
 data.json to import.
 
+
 ##### query
 
 The URL location to the data.json file to import.
+
+
+##### log_level
+
+How verbose to log messages (default: INFO).
+
 
 #### Server configuration
 
