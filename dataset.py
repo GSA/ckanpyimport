@@ -167,16 +167,18 @@ def map_dataset(dataset, ds):
                             })
 
         if key == 'bureauCode':
-            dataset['extras'].append({
-                'key': 'bureau_code',
-                'value': ", ".join(value)
-            })
+            if value:
+                dataset['extras'].append({
+                    'key': 'bureau_code',
+                    'value': ", ".join(value)
+                })
 
         if key == 'programCode':
-            dataset['extras'].append({
-                'key': 'program_code',
-                'value': ", ".join(value)
-            })
+            if value:
+                dataset['extras'].append({
+                    'key': 'program_code',
+                    'value': ", ".join(value)
+                })
 
         if key == 'license':
             if LICENSES.get(value):
@@ -233,22 +235,25 @@ def map_dataset(dataset, ds):
             })
 
         if key == 'theme':
-            dataset['extras'].append({
-                'key': 'category',
-                'value': ", ".join(value)
-            })
+            if value:
+                dataset['extras'].append({
+                    'key': 'category',
+                    'value': ", ".join(value)
+                })
 
         if key == 'references':
-            dataset['extras'].append({
-                'key': 'related_documents',
-                'value': ", ".join(value)
-            })
+            if value:
+                dataset['extras'].append({
+                    'key': 'related_documents',
+                    'value': ", ".join(value)
+                })
 
         if key == 'language':
-            dataset['extras'].append({
-                'key': 'language',
-                'value': ", ".join(value)
-            })
+            if value:
+                dataset['extras'].append({
+                    'key': 'language',
+                    'value': ", ".join(value)
+                })
 
         if key == 'systemOfRecords':
             dataset['extras'].append({
