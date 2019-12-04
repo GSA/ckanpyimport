@@ -145,7 +145,10 @@ def import_ds(ds, type=None, parent_id=None):
     dataset_full._update(update_url, api_key)
 
     # add resource
-    resources = ds.get('distribution', [])
+    resources = ds.get('distribution', None)
+    if not resources:
+        return dataset_full
+
     for res in resources:
         resource = Resource()
         map_resource(resource, res, dataset_full['id'])
