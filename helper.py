@@ -49,7 +49,7 @@ def munge_name(name):
     '''Munges the package name field in case it is not to spec.
     '''
     # remove foreign accents
-    if isinstance(name, unicode):
+    if isinstance(name, str):
         name = substitute_ascii_equivalents(name)
     # separators become dashes
     name = re.sub('[ .:/]', '-', name)
@@ -68,7 +68,7 @@ def munge_title_to_name(name):
     '''Munge a package title into a package name.
     '''
     # remove foreign accents
-    if isinstance(name, unicode):
+    if isinstance(name, str):
         name = substitute_ascii_equivalents(name)
     # convert spaces and separators
     name = re.sub('[ .:/]', '-', name)
@@ -133,7 +133,7 @@ def substitute_ascii_equivalents(text_unicode):
 
     r = ''
     for char in text_unicode:
-        if char_mapping.has_key(ord(char)):
+        if ord(char) in char_mapping:
             r += char_mapping[ord(char)]
         elif ord(char) >= 0x80:
             pass

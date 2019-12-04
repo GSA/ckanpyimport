@@ -1,7 +1,9 @@
-import urllib
-import urllib2
 import json
 import logging
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 
 from helper import munge_title_to_name, re_munge_name, munge_tag, LICENSES, \
     get_readable_frequency
@@ -18,15 +20,15 @@ class Dataset(dict):
             self['name'] = munge_title_to_name(self['title'])
 
         json_dataset = json.dumps(self)
-        json_dataset = urllib.quote(json_dataset)
+        json_dataset = urllib.parse.quote(json_dataset)
 
-        req = urllib2.Request(url, json_dataset, {
+        req = urllib.request.Request(url, json_dataset, {
             'X-CKAN-API-Key':api_key,
             'Cookie':'auth_tkt=1'
         })
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError, e:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as e:
             error_dict = json.loads(e.read())
             if 'name' in error_dict['error']:
                 error_message = error_dict['error']['name']
@@ -36,10 +38,10 @@ class Dataset(dict):
             else:
                 log.error(error_dict)
                 log.exception('Failed to create dataset')
-                quit()
-        except urllib2.URLError, e:
+                sys.exit(1)
+        except urllib.error.URLError as e:
             log.exception('Failed to create dataset')
-            quit()
+            sys.exit(1)
         else:
             response_dict = json.loads(response.read())
             assert response_dict['success'] is True
@@ -48,20 +50,20 @@ class Dataset(dict):
 
     def _update(self, url, api_key=''):
         json_dataset = json.dumps(self)
-        json_dataset = urllib.quote(json_dataset)
+        json_dataset = urllib.parse.quote(json_dataset)
 
-        req = urllib2.Request(url, json_dataset, {
+        req = urllib.request.Request(url, json_dataset, {
             'X-CKAN-API-Key':api_key,
             'Cookie':'auth_tkt=1'
         })
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError, e:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as e:
             log.exception(e)
-            quit()
-        except urllib2.URLError, e:
+            sys.exit(1)
+        except urllib.error.URLError as e:
             log.exception(e)
-            quit()
+            sys.exit(1)
         else:
             response_dict = json.loads(response.read())
             assert response_dict['success'] is True
@@ -81,7 +83,7 @@ def create_dummy_dataset():
 
 def load_dataset(ds):
     dataset = Dataset()
-    for key, value in ds.iteritems():
+    for key, value in ds.items():
         if key == 'extras':
             continue
         dataset[key] = value
@@ -94,7 +96,7 @@ def map_dataset(dataset, ds): # pylint: disable=too-many-branches,too-many-state
     dataset['tags'] = []
     dataset['license_id'] = LICENSES['License Not Specified']
 
-    for key, value in ds.iteritems(): # pylint: disable=too-many-nested-blocks
+    for key, value in ds.items(): # pylint: disable=too-many-nested-blocks
         log.debug('key=%s value=%s', key, value)
 
         if key in ['title']:
@@ -203,8 +205,7 @@ def map_dataset(dataset, ds): # pylint: disable=too-many-branches,too-many-state
         if key == 'dataQuality':
             dataset['extras'].append({
                 'key': 'data_quality',
-                'value': False if value in [
-                    'off', 'false', 'no', '0'] else True
+                'value': value not in ['off', 'false', 'no', '0']
             })
 
         if key == 'accrualPeriodicity':

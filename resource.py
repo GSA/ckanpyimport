@@ -1,7 +1,9 @@
-import logging
-import urllib
-import urllib2
 import json
+import logging
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 
 
 log = logging.getLogger(__name__)
@@ -10,20 +12,20 @@ log = logging.getLogger(__name__)
 class Resource(dict):
     def create(self, url, api_key=''):
         json_resource = json.dumps(self)
-        json_resource = urllib.quote(json_resource)
+        json_resource = urllib.parse.quote(json_resource)
 
-        req = urllib2.Request(url, json_resource, {
+        req = urllib.request.Request(url, json_resource, {
             'X-CKAN-API-Key':api_key,
             'Cookie':'auth_tkt=1'
         })
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError, e:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as e:
             log.exception(e)
-            quit()
-        except urllib2.URLError, e:
+            sys.exit(1)
+        except urllib.error.URLError as e:
             log.exception(e)
-            quit()
+            sys.exit(1)
         else:
             response_dict = json.loads(response.read())
             assert response_dict['success'] is True

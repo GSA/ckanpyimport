@@ -1,8 +1,10 @@
-import ConfigParser
+import configparser
 import json
 import logging
 import sys
-import urllib2
+import urllib.error
+import urllib.parse
+import urllib.request
 
 from dataset import create_dummy_dataset, load_dataset, map_dataset
 from resource import Resource, map_resource # pylint: disable=wrong-import-order
@@ -15,7 +17,7 @@ logging.basicConfig(
 
 if len(sys.argv) < 3:
     logging.error('Error: Provide server and org names.')
-    quit()
+    sys.exit(1)
 
 CONFIG_DEFAULTS = {
     'main': {
@@ -23,7 +25,7 @@ CONFIG_DEFAULTS = {
     },
 }
 
-config = ConfigParser.ConfigParser(CONFIG_DEFAULTS)
+config = configparser.ConfigParser(CONFIG_DEFAULTS)
 config.read('server.ini')
 
 log_level = config.get('main', 'log_level')
@@ -34,7 +36,7 @@ server = sys.argv[1]
 owner_org = sys.argv[2]
 if server not in servers[1:]:
     logging.error('Error: Server %s not found.', server)
-    quit()
+    sys.exit(1)
 
 
 query_url = config.get('main', 'query')
@@ -55,15 +57,15 @@ def main(): # pylint: disable=too-many-locals,too-many-branches,too-many-stateme
     ids_children = set()
     ids_pair_parents = {}
 
-    req = urllib2.Request(query_url, None, {'Cookie':'auth_tkt=1'})
+    req = urllib.request.Request(query_url, None, {'Cookie':'auth_tkt=1'})
     try:
-        response = urllib2.urlopen(req)
-    except urllib2.HTTPError, e:
+        response = urllib.request.urlopen(req)
+    except urllib.error.HTTPError as e:
         logging.error('Error: %s', e)
-        quit()
-    except urllib2.URLError, e:
+        sys.exit(1)
+    except urllib.error.URLError as e:
         logging.error('Error: %s', e)
-        quit()
+        sys.exit(1)
     else:
         response_dict = json.loads(response.read())
         assert response_dict['conformsTo'] \
